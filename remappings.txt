@@ -1,0 +1,4 @@
+@forge-std/=lib/forge-std/src/
+@protocol=src/
+@tests=test/
+@forge-proposal-simulator=lib/forge-proposal-simulator/

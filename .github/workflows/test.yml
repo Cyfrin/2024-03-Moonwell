@@ -1,0 +1,32 @@
+name: test
+
+on: push
+
+env:
+  FOUNDRY_PROFILE: ci
+
+jobs:
+  test:
+    strategy:
+      fail-fast: true
+
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: install
+        uses: foundry-rs/foundry-toolchain@v1
+        with:
+          version: nightly
+
+      - name: build
+        run: |
+          forge --version
+          forge build
+        id: build
+
+      - name: test
+        run: |
+          forge test --match-contract MIPM17IntegrationTest --fork-url https://rpc.api.moonbeam.network -vvv
