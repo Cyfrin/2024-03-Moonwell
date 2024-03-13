@@ -11,6 +11,8 @@
 - Total Pool - $15,000
 - H/M - $14,000
 - Low - $1,000
+- Community Judging Pool - $1,500
+
 - Starts: Monday, March 04, 2024 Noon UTC
 - Ends: Monday, March 11, 2024 Noon UTC
 
