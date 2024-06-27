@@ -1,12 +1,8 @@
 # Moonwell Contest
 
-<p align="center">
-<img src="https://res.cloudinary.com/droqoz7lg/image/upload/q_90/dpr_2.0/c_fill,g_auto,h_320,w_320/f_auto/v1/company/n0p9zsbc1kpuwhmbergr?_a=BATAUVAA0" width="500" alt="Moonwell">
-</p>
+[//]: # (contest-details-open)
 
-# Contest Details
-
-### Prize Pool
+## Contest Details
 
 - Total Pool - $15,000
 - H/M - $14,000
@@ -23,10 +19,6 @@
 - $/nSLOC: $38.07
 - $/Complexity: $57.69
 
-# Moonwell Protocol
-
-## Contest Details
-
 This contest will be focused on two main changes to the Moonwell protocol on Moonbeam. The first change is to upgrade the mTokens to a new implementation, and the second change is to liquidate bad debt from the protocol. Two separate contracts will be used to upgrade existing contracts, and a governance proposal will be used to liquidate bad debt should the DAO choose to ratify these changes.
 
 ## About the Project
@@ -42,18 +34,38 @@ Moonwell is a fork of Compound, and naming has been modified from `cTokens` to `
 
 [GitHub](https://github.com/moonwell-fi/)
 
-## Compatibilities
-
-Compatibilities:
-Blockchains: - Ethereum/Any EVM - Moonbeam
-Tokens: - ERC20 standard implementations (including Moonbeam pre-compile) - Non standard ERC20 implmentations such as fee-on-transfer or no boolean returned on `transfer` or `transferFrom` not supported.
-
 ## Actors
 
 There are two main actors in the Moonwell protocol:
 
 - privileged actors: this is the timelock and the guardian, which are able to execute certain functions on the protocol
 - users: these are the people who interact with the protocol, by either supplying or borrowing assets from the protocol
+
+## Definition Changes
+
+Cash in the Compound whitepaper is defined as the underlying asset balance of the mToken. This definition has been changed to underlying asset balance of the mToken plus the bad debt amount. This change was necessary to allow the share price to remain unchanged when bad debt is created by fixing users. This has flow on effects for the frontend as the getCash function will return higher than the underlying balance of the mToken.
+
+### Exchange Rate
+
+The current exchange rate forumula is:
+
+```
+exchangeRate = (cash + total borrows - reserves) / totalSupply
+```
+
+See [this](https://betterprogramming.pub/compound-v2-in-depth-6227c0528b5) article for an explanation of the exchange rate.
+
+The new exchange rate formula post upgrade for mFRAX and mxcDOT is:
+
+```
+exchangeRate = (bad debt + cash + total borrows - reserves) / totalSupply
+```
+
+This new formula accounts for the bad debt. The exchange rate will not change when bad debt is realized, or repaid with reserves or cash.
+
+[//]: # (contest-details-close)
+
+[//]: # (scope-open)
 
 ## Scope
 
@@ -64,7 +76,25 @@ The scope of this audit is to verify that the changes to the Moonwell protocol m
   - `MErc20DelegateFixer`
   - `MErc20DelegateMadFixer`
 
-## Setup
+| Contract                   | SLOC | Purpose                        | Libraries used | Comments                                               |
+| -------------------------- | ---- | ------------------------------ | -------------- | ------------------------------------------------------ |
+| MErc20DelegateFixer.sol    | 63   | Bad Debt Fixer Logic           | SafeMath       |
+| MErc20DelegateMadFixer.sol | 9    | Nomad Collateral Sweeper Logic | n/a            |
+| mip-m17.sol                | 198  | MIP-M17 Governance Proposal    | n/a            | Validate function out of scope, deployment is in scope |
+
+The only issues that are in scope are the ones that could reasonably arise as a result of the upgrade. Any issues that were present in the previous implementation are out of scope.
+
+## Compatibilities
+
+Compatibilities:
+Blockchains: - Ethereum/Any EVM - Moonbeam
+Tokens: - ERC20 standard implementations (including Moonbeam pre-compile) - Non standard ERC20 implmentations such as fee-on-transfer or no boolean returned on `transfer` or `transferFrom` not supported.
+
+[//]: # (scope-close)
+
+[//]: # (getting-started-open)
+
+## Getting Started
 
 ```
 git clone https://github.com/Cyfrin/2024-03-Moonwell.git
@@ -590,17 +620,11 @@ The following mocks have been used to test this upgraded system `Mock USDT`, `Mo
 
 xcDOT returns true on transfer and transferFrom. This has been confirmed by the Moonbeam team. FRAX also returns true after a successful transferFrom.
 
-## Files in Scope
+[//]: # (getting-started-close)
 
-| Contract                   | SLOC | Purpose                        | Libraries used | Comments                                               |
-| -------------------------- | ---- | ------------------------------ | -------------- | ------------------------------------------------------ |
-| MErc20DelegateFixer.sol    | 63   | Bad Debt Fixer Logic           | SafeMath       |
-| MErc20DelegateMadFixer.sol | 9    | Nomad Collateral Sweeper Logic | n/a            |
-| mip-m17.sol                | 198  | MIP-M17 Governance Proposal    | n/a            | Validate function out of scope, deployment is in scope |
+[//]: # (known-issues-open)
 
-The only issues that are in scope are the ones that could reasonably arise as a result of the upgrade. Any issues that were present in the previous implementation are out of scope.
-
-## Out of Scope Findings
+## Known Issues
 
 The `validate` function in the MIP-M17 proposal is out of scope for this audit. This function is not used in the contracts that are being upgraded.
 
@@ -626,24 +650,4 @@ Speculating about future changes that could happen after this upgrade are out of
 
 **Additional Known Issues as outlined [here](https://github.com/Cyfrin/2024-03-Moonwell/issues/1)**
 
-## Definition Changes
-
-Cash in the Compound whitepaper is defined as the underlying asset balance of the mToken. This definition has been changed to underlying asset balance of the mToken plus the bad debt amount. This change was necessary to allow the share price to remain unchanged when bad debt is created by fixing users. This has flow on effects for the frontend as the getCash function will return higher than the underlying balance of the mToken.
-
-### Exchange Rate
-
-The current exchange rate forumula is:
-
-```
-exchangeRate = (cash + total borrows - reserves) / totalSupply
-```
-
-See [this](https://betterprogramming.pub/compound-v2-in-depth-6227c0528b5) article for an explanation of the exchange rate.
-
-The new exchange rate formula post upgrade for mFRAX and mxcDOT is:
-
-```
-exchangeRate = (bad debt + cash + total borrows - reserves) / totalSupply
-```
-
-This new formula accounts for the bad debt. The exchange rate will not change when bad debt is realized, or repaid with reserves or cash.
+[//]: # (known-issues-close)
