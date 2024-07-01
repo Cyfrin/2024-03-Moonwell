@@ -1,7 +1,5 @@
 # Moonwell Contest
 
-[//]: # (contest-details-open)
-
 ## Contest Details
 
 - Total Pool - $15,000
@@ -18,6 +16,8 @@
 - Complexity Score: 260
 - $/nSLOC: $38.07
 - $/Complexity: $57.69
+
+[//]: # (contest-details-open)
 
 This contest will be focused on two main changes to the Moonwell protocol on Moonbeam. The first change is to upgrade the mTokens to a new implementation, and the second change is to liquidate bad debt from the protocol. Two separate contracts will be used to upgrade existing contracts, and a governance proposal will be used to liquidate bad debt should the DAO choose to ratify these changes.
 
